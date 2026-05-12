@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>10/C Official | Bilişim Portalı</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Space+Grotesk:wght@300;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #00f2ff;
+            --secondary: #7000ff;
+            --bg: #030712;
+            --card-bg: rgba(17, 24, 39, 0.7);
+            --text: #f3f4f6;
+            --accent: #10b981;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; cursor: none; }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            font-family: 'Outfit', sans-serif;
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+        }
+
+        /* --- LAYERED BACKGROUND ANIMATION --- */
+        .bg-layers {
+            position: fixed; inset: 0; z-index: -1;
+            background: radial-gradient(circle at 50% 50%, #0f172a 0%, #030712 100%);
+        }
+        .blob {
+            position: absolute; width: 500px; height: 500px;
+            background: linear-gradient(135deg, rgba(0, 242, 255, 0.1), rgba(112, 0, 255, 0.1));
+            filter: blur(80px); border-radius: 50%;
+            animation: move 20s infinite alternate;
+        }
+
+        @keyframes move {
+            from { transform: translate(-10%, -10%); }
+            to { transform: translate(20%, 20%); }
+        }
+
+        /* --- CUSTOM CURSOR --- */
+        #cursor {
+            width: 20px; height: 20px; border: 2px solid var(--primary);
+            border-radius: 50%; position: fixed; pointer-events: none;
+            transition: transform 0.1s ease; z-index: 9999;
+        }
+
+        /* --- NAVIGATION --- */
+        nav {
+            padding: 20px 5%; display: flex; justify-content: space-between;
+            align-items: center; position: sticky; top: 0; z-index: 100;
+            backdrop-filter: blur(10px); border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+        .logo { font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 1.5rem; letter-spacing: -1px; }
+        .logo span { color: var(--primary); }
+
+        /* --- HERO SECTION --- */
+        .hero {
+            height: 90vh; display: flex; flex-direction: column;
+            justify-content: center; align-items: center; text-align: center;
+            padding: 0 20px;
+        }
+        .hero h1 {
+            font-family: 'Space Grotesk', sans-serif; font-size: clamp(3rem, 10vw, 6rem);
+            line-height: 0.9; margin-bottom: 20px; opacity: 0; transform: translateY(30px);
+            animation: fadeIn 1s forwards 0.5s;
+        }
+        .hero p { color: #94a3b8; max-width: 600px; font-size: 1.1rem; margin-bottom: 30px; }
+
+        /* --- GLASS CARDS --- */
+        .container { max-width: 1100px; margin: 0 auto; padding: 40px 20px; }
+        .glass-card {
+            background: var(--card-bg); border: 1px solid rgba(255,255,255,0.05);
+            backdrop-filter: blur(12px); border-radius: 24px; padding: 30px;
+            margin-bottom: 30px; transition: transform 0.3s ease, border-color 0.3s;
+        }
+        .glass-card:hover { transform: translateY(-5px); border-color: var(--primary); }
+
+        /* --- ANNOUNCEMENTS --- */
+        .badge {
+            display: inline-block; padding: 5px 15px; border-radius: 100px;
+            font-size: 0.8rem; font-weight: 600; text-transform: uppercase; margin-bottom: 15px;
+        }
+        .badge-danger { background: rgba(239, 68, 68, 0.1); color: #ef4444; border: 1px solid #ef4444; }
+        .badge-info { background: rgba(0, 242, 255, 0.1); color: var(--primary); border: 1px solid var(--primary); }
+
+        /* --- PHYSICS WAVE --- */
+        .wave-container { height: 100px; width: 100%; margin: 20px 0; overflow: hidden; position: relative; }
+        .wave-svg { width: 100%; height: 100%; }
+
+        /* --- REGISTRATION FORM --- */
+        .input-group { margin-bottom: 20px; }
+        label { display: block; margin-bottom: 8px; color: #94a3b8; font-size: 0.9rem; }
+        input {
+            width: 100%; padding: 15px; border-radius: 12px; background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.1); color: white; outline: none;
+            transition: 0.3s; font-family: inherit;
+        }
+        input:focus { border-color: var(--primary); background: rgba(255,255,255,0.07); }
+        
+        .warning-text {
+            font-size: 0.8rem; color: #64748b; font-style: italic; margin-top: 15px;
+            padding: 10px; border-left: 2px solid var(--secondary);
+        }
+
+        .btn-main {
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            color: white; border: none; padding: 15px 30px; border-radius: 12px;
+            font-weight: 600; cursor: pointer; transition: 0.3s; width: 100%;
+        }
+        .btn-main:hover { filter: brightness(1.2); transform: scale(1.02); }
+
+        .btn-school {
+            background: transparent; border: 1px solid rgba(255,255,255,0.2);
+            color: white; padding: 10px 20px; border-radius: 100px; text-decoration: none;
+            display: inline-flex; align-items: center; gap: 10px; font-size: 0.9rem;
+            transition: 0.3s; margin-top: 20px;
+        }
+        .btn-school:hover { background: white; color: black; }
+
+        /* --- STUDENT LIST --- */
+        .student-list { list-style: none; margin-top: 20px; }
+        .student-item {
+            display: flex; justify-content: space-between; padding: 15px;
+            border-bottom: 1px solid rgba(255,255,255,0.05); animation: slideIn 0.5s forwards;
+        }
+        @keyframes slideIn { from { opacity: 0; transform: translateX(-20px); } to { opacity: 1; transform: translateX(0); } }
+
+        @keyframes fadeIn { to { opacity: 1; transform: translateY(0); } }
+
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 3.5rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="cursor"></div>
+    <div class="bg-layers">
+        <div class="blob"></div>
+        <div class="blob" style="right: 0; bottom: 0; animation-delay: -5s;"></div>
+    </div>
+
+    <nav>
+        <div class="logo">10/C<span>.OFFICIAL</span></div>
+        <div style="font-size: 0.8rem; color: #64748b;">EREN MTAL ERGENE</div>
+    </nav>
+
+    <section class="hero">
+        <div class="badge badge-info">2025-2026 Eğitim Sezonu</div>
+        <h1>Geleceği<br>Kodluyoruz.</h1>
+        <p>10/C Bilişim sınıfının resmi portali. Sınıf içi gelişmeler, sınav takvimi ve öğrenci kayıt sistemi tek bir merkezde.</p>
+        <a href="#kayit" class="btn-school">Aramıza Katıl ↓</a>
+    </section>
+
+    <div class="container">
+        <div class="glass-card">
+            <div class="badge badge-danger">Yarın Sınav Var</div>
+            <h2 style="margin-bottom: 15px;">Fizik Quiz & Performans</h2>
+            <p style="color: #94a3b8; margin-bottom: 20px;">Konu: <b>Dalgalar</b>. Dalgaların temel özellikleri, yayılması ve görselleştirilmesi hakkında hazırlıklı olun.</p>
+            
+            <div class="wave-container">
+                <svg class="wave-svg" viewBox="0 0 800 100">
+                    <path id="wavePath" fill="none" stroke="#00f2ff" stroke-width="3" />
+                </svg>
+            </div>
+            
+            <div style="padding: 15px; background: rgba(0,0,0,0.2); border-radius: 12px; font-size: 0.9rem;">
+                ℹ️ <b>19 Mayıs Tatili:</b> Önümüzdeki Salı günü bayram nedeniyle resmi tatildir.
+            </div>
+        </div>
+
+        <div id="kayit" class="glass-card">
+            <h2 style="margin-bottom: 10px;">Öğrenci Kaydı</h2>
+            <p style="color: #94a3b8; font-size: 0.9rem; margin-bottom: 25px;">Sınıf listesinde yer almak için bilgilerini gir.</p>
+            
+            <div class="input-group">
+                <label>Adın ve Soyadın</label>
+                <input type="text" id="studentName" placeholder="Örn: Eymen ...">
+            </div>
+            
+            <button class="btn-main" onclick="addStudent()">Kaydı Tamamla</button>
+            
+            <div class="warning-text">
+                "BU BİR KAYIT SISTEMIDIR KIMIN OLDUĞUNU/KATILDIĞINI ÖĞRENMEK İÇİN YABANCI BİRİSİ OLDUĞUNU ANLAMAK İÇİN TASARLANMIŞTIR."
+            </div>
+        </div>
+
+        <div class="glass-card">
+            <h3>Katılımcı Listesi</h3>
+            <ul id="list" class="student-list">
+                <li style="color: #64748b; font-size: 0.9rem;">Henüz kimse kayıt olmadı.</li>
+            </ul>
+        </div>
+
+        <div style="text-align: center; margin-top: 50px;">
+            <a href="https://erenmtal.meb.k12.tr" target="_blank" class="btn-school">
+                🌐 Eren MTAL Resmi Web Sitesi
+            </a>
+            <p style="margin-top: 20px; font-size: 0.7rem; color: #475569;">Created by Gemini for 10/C | 2026</p>
+        </div>
+    </div>
+
+    <script>
+        // Smooth Cursor
+        const cursor = document.getElementById('cursor');
+        document.addEventListener('mousemove', (e) => {
+            cursor.style.left = e.clientX + 'px';
+            cursor.style.top = e.clientY + 'px';
+        });
+
+        // Dynamic Wave Animation for Physics Section
+        let t = 0;
+        function animateWave() {
+            const path = document.getElementById('wavePath');
+            let points = [];
+            for (let x = 0; x <= 800; x += 10) {
+                let y = 50 + Math.sin(x * 0.02 + t) * 20;
+                points.push(`${x},${y}`);
+            }
+            path.setAttribute('d', `M ${points.join(' L ')}`);
+            t += 0.05;
+            requestAnimationFrame(animateWave);
+        }
+        animateWave();
+
+        // Student Registration Logic
+        let students = JSON.parse(localStorage.getItem('10c_students')) || [];
+
+        function updateList() {
+            const listEl = document.getElementById('list');
+            if (students.length === 0) return;
+            
+            listEl.innerHTML = students.map(s => `
+                <li class="student-item">
+                    <span>${s.name}</span>
+                    <span style="color: var(--accent); font-size: 0.8rem;">✓ Katıldı</span>
+                </li>
+            `).join('');
+        }
+
+        function addStudent() {
+            const nameInput = document.getElementById('studentName');
+            const name = nameInput.value.trim();
+            
+            if (name) {
+                students.push({ name: name, date: new Date().toLocaleTimeString() });
+                localStorage.setItem('10c_students', JSON.stringify(students));
+                nameInput.value = '';
+                updateList();
+            } else {
+                alert("Lütfen ismini gir!");
+            }
+        }
+
+        // Initialize
+        updateList();
+    </script>
+</body>
+</html>
